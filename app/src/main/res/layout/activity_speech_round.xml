@@ -75,8 +75,8 @@
                     android:layout_height="15dp"
                     android:src="@drawable/shape_light_circle"
                     android:layout_gravity="center"
-                    android:layout_marginStart="20dp"
-                    android:layout_alignTop="@+id/statusCircle2"
+                    android:layout_marginStart="6dp"
+                    android:layout_below="@+id/textView"
                     android:layout_toEndOf="@+id/Button02">
 
                 </ImageView>
