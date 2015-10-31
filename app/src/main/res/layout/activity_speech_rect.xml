@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.wearable.view.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/container" tools:context=".SpeechActivity"
+    tools:deviceIds="wear_rect" >
+
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/topCircle"
+                    android:layout_margin="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/shape_rect" >
+
+                </ImageView>
+
+
+            </FrameLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/statusCircle1"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/shape_light_circle"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="21dp"
+                    android:layout_alignTop="@+id/statusCircle2"
+                    android:layout_toStartOf="@+id/statusCircle2">
+
+                </ImageView>
+
+
+                <ImageView
+                    android:id="@+id/statusCircle2"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/shape_light_circle"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="32dp">
+
+                </ImageView>
+
+                <ImageView
+                    android:id="@+id/statusCircle3"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/shape_light_circle"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="22dp"
+                    android:layout_alignTop="@+id/statusCircle2"
+                    android:layout_toEndOf="@+id/statusCircle2">
+
+                </ImageView>
+
+                <Button
+                    android:id="@+id/Button02"
+                    android:layout_width="48dip"
+                    android:layout_height="48dip"
+                    android:background="@drawable/micbutton_selector"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:layout_above="@+id/textView2"
+                    android:layout_centerHorizontal="true" />
+                
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:text="Press Button"
+                    android:textAlignment="center"
+                    android:layout_above="@+id/statusCircle1"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/textView2" />
+
+
+            </RelativeLayout>
+
+
+
+
+        </FrameLayout>
+
+
+    </FrameLayout>
+
+</android.support.wearable.view.BoxInsetLayout>
