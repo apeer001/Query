@@ -67,8 +67,9 @@
                     android:layout_marginRight="1dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="37dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true">
+
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/scrollTextView">
 
                 </ImageView>
 
@@ -79,7 +80,7 @@
                     android:src="@drawable/red_circle"
                     android:layout_gravity="center"
                     android:layout_marginStart="6dp"
-                    android:layout_below="@+id/SpeechText"
+                    android:layout_below="@+id/scrollTextView"
                     android:layout_toEndOf="@+id/Button02">
 
                 </ImageView>
@@ -89,7 +90,9 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignTop="@+id/Button02"
-                    android:layout_centerHorizontal="true">
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/scrollTextView"
+                    >
 
                 </ImageView>
 
@@ -99,19 +102,31 @@
                     android:layout_height="48dip"
                     android:background="@drawable/micbutton_selector"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="19dp"
-                    android:layout_above="@+id/SpeechText"
+                    android:layout_marginBottom="3dp"
+                    android:layout_above="@+id/scrollTextView"
                     android:layout_centerHorizontal="true" />
 
-                <TextView
-                    android:layout_width="150dp"
+
+                <ScrollView
+                    android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:text="Press Button"
-                    android:textAlignment="center"
-                    android:id="@+id/SpeechText"
-                    android:layout_above="@+id/statusCircle1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="18dp" />
+                    android:id="@+id/scrollTextView"
+                    android:layout_centerInParent="true"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Press Button"
+                        android:textAlignment="center"
+                        android:id="@+id/SpeechText"
+                        android:layout_above="@+id/statusCircle1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="18dp"
+                        />
+                </ScrollView>
 
             </RelativeLayout>
 

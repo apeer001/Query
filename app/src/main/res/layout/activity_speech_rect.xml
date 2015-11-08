@@ -52,7 +52,9 @@
                         android:layout_gravity="center"
                         android:layout_marginEnd="21dp"
                         android:layout_alignTop="@+id/statusCircle2"
-                        android:layout_toStartOf="@+id/statusCircle2">
+                        android:layout_toStartOf="@+id/statusCircle2"
+                        android:layout_below="@+id/scrollTextView"
+                        >
 
                     </ImageView>
 
@@ -65,11 +67,14 @@
                         android:layout_marginLeft="1dp"
                         android:layout_marginRight="1dp"
                         android:layout_gravity="center"
-                        android:layout_alignParentBottom="true"
+
                         android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="32dp">
+                        android:layout_marginBottom="32dp"
+                        android:layout_below="@+id/scrollTextView">
 
                     </ImageView>
+
+                    <!--   android:layout_alignParentBottom="true" -->
 
                     <ImageView
                         android:id="@+id/statusCircle3"
@@ -79,7 +84,9 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="22dp"
                         android:layout_alignTop="@+id/statusCircle2"
-                        android:layout_toEndOf="@+id/statusCircle2">
+                        android:layout_toEndOf="@+id/statusCircle2"
+                        android:layout_below="@+id/scrollTextView"
+                        >
 
                     </ImageView>
 
@@ -89,9 +96,10 @@
                         android:layout_height="48dip"
                         android:background="@drawable/micbutton_selector"
                         android:layout_gravity="center"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="3dp"
                         android:layout_above="@+id/scrollTextView"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        />
 
 
 
@@ -102,6 +110,7 @@
                         android:layout_centerInParent="true"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
+                        android:layout_marginBottom="20dp"
                         >
                         <TextView
                             android:layout_width="match_parent"
