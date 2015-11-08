@@ -9,6 +9,7 @@
 
 
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,6 +24,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <!--
                 <ImageView
                     android:id="@+id/topCircle"
                     android:layout_margin="5dp"
@@ -32,6 +34,7 @@
                     android:src="@drawable/shape_oval" >
 
                 </ImageView>
+                -->
 
 
             </FrameLayout>
@@ -76,7 +79,7 @@
                     android:src="@drawable/shape_light_circle"
                     android:layout_gravity="center"
                     android:layout_marginStart="6dp"
-                    android:layout_below="@+id/textView"
+                    android:layout_below="@+id/SpeechText"
                     android:layout_toEndOf="@+id/Button02">
 
                 </ImageView>
@@ -97,7 +100,7 @@
                     android:background="@drawable/micbutton_selector"
                     android:layout_gravity="center"
                     android:layout_marginBottom="19dp"
-                    android:layout_above="@+id/textView"
+                    android:layout_above="@+id/SpeechText"
                     android:layout_centerHorizontal="true" />
 
                 <TextView
@@ -105,7 +108,7 @@
                     android:layout_height="30dp"
                     android:text="Press Button"
                     android:textAlignment="center"
-                    android:id="@+id/textView"
+                    android:id="@+id/SpeechText"
                     android:layout_above="@+id/statusCircle1"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="18dp" />
@@ -117,5 +120,10 @@
 
 
     </FrameLayout>
+
+    <com.nhaarman.supertooltips.ToolTipRelativeLayout
+        android:id="@+id/activity_main_tooltipRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </android.support.wearable.view.BoxInsetLayout>

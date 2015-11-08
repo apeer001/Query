@@ -23,6 +23,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <!--
                 <ImageView
                     android:id="@+id/topCircle"
                     android:layout_margin="1dp"
@@ -33,6 +34,7 @@
 
                 </ImageView>
 
+                -->
 
             </FrameLayout>
 
@@ -88,7 +90,7 @@
                     android:background="@drawable/micbutton_selector"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
-                    android:layout_above="@+id/textView2"
+                    android:layout_above="@+id/SpeechText"
                     android:layout_centerHorizontal="true" />
                 
                 <TextView
@@ -98,7 +100,7 @@
                     android:textAlignment="center"
                     android:layout_above="@+id/statusCircle1"
                     android:layout_centerHorizontal="true"
-                    android:id="@+id/textView2" />
+                    android:id="@+id/SpeechText" />
 
 
             </RelativeLayout>
@@ -110,5 +112,10 @@
 
 
     </FrameLayout>
+
+    <com.nhaarman.supertooltips.ToolTipRelativeLayout
+        android:id="@+id/activity_main_tooltipRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </android.support.wearable.view.BoxInsetLayout>

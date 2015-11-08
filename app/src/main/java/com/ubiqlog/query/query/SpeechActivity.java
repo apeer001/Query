@@ -1,19 +1,29 @@
 package com.ubiqlog.query.query;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -36,6 +46,11 @@ public class SpeechActivity extends WearableActivity {
     private Button microphoneBtn;
     private ImageView circularImage;
 
+    private TextView txtSpeechInput;
+    private ImageButton btnSpeak;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+
+    private ToolTipView myToolTipView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +69,37 @@ public class SpeechActivity extends WearableActivity {
                 mContainerView = (BoxInsetLayout) findViewById(R.id.container);
                 mTextView = (TextView) findViewById(R.id.text);
 
+                txtSpeechInput = (TextView) findViewById(R.id.SpeechText);
                 microphoneBtn = (Button) findViewById(R.id.Button02);
 
                 microphoneBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        promptSpeechInput();
+                        if (myToolTipView != null) {
+                            myToolTipView.remove();
+                        }
                     }
                 });
+
+                // Create tool tips for speech button
+                ToolTipRelativeLayout toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+
+                ToolTip toolTip = new ToolTip()
+                        .withText("Touch to speak")
+                        .withTextColor(Color.WHITE)
+                        .withColor(Color.GRAY)
+                        .withShadow()
+                        .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+                myToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.Button02));
+                myToolTipView.setPointerCenterX(800);
+                myToolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
+                    @Override
+                    public void onToolTipViewClicked(ToolTipView toolTipView) {
+                        toolTipView.remove();
+                    }
+                });
+
 
             }
         });
@@ -99,4 +137,45 @@ public class SpeechActivity extends WearableActivity {
             mClockView.setVisibility(View.GONE);
         }
     }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    txtSpeechInput.setText(result.get(0));
+                }
+                break;
+            }
+
+        }
+    }
+
 }
