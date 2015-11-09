@@ -14,6 +14,8 @@ import android.speech.RecognizerIntent;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Vector;
 
 import Data.ParseStrings;
@@ -45,6 +48,10 @@ public class SpeechActivity extends WearableActivity {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
+
+    private static final Integer resourceIds [] = {R.id.statusCircle1, R.id.statusCircle2, R.id.statusCircle3};
+    private Vector<Pair<Integer, ToolTip>> ttips = new Vector<>();
+
 
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
@@ -62,6 +69,10 @@ public class SpeechActivity extends WearableActivity {
     private ImageView statusLight1;
     private ImageView statusLight2;
     private ImageView statusLight3;
+
+    private ToolTipRelativeLayout toolTipRelativeLayout;
+
+    private Vector<String> parsedValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +117,7 @@ public class SpeechActivity extends WearableActivity {
                 });
 
                 // Create tool tips for speech button
-                ToolTipRelativeLayout toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+                toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
 
                 ToolTip toolTip = new ToolTip()
                         .withText("Touch to speak")
@@ -196,7 +207,10 @@ public class SpeechActivity extends WearableActivity {
                     txtSpeechInput.setText(result.get(0));
 
                     // Parse text from user and update status lights
-                    ParseSpeech(result.get(0));
+                    parsedValues = ParseSpeech(result.get(0));
+                    // Make suggestions if there are missing values for parsed values
+                    setupTooltipSuggestions(parsedValues);
+
                 }
                 break;
             }
@@ -299,6 +313,120 @@ public class SpeechActivity extends WearableActivity {
 
         return tokenVector;
 
+    }
+
+    public Vector<Pair<Integer, ToolTip>> setupTooltipSuggestions(final Vector<String> pValues) {
+
+        // Make tooltips to give suggestions
+        Random randomGenerator =  new Random();
+        Vector<Pair<Integer, ToolTip>> toolTips = new Vector<>();
+
+        int randomInt = 0;
+        String suggestion = "";
+        if (pValues.size() == 4) {
+            if (pValues.get(0).equals("")) {
+
+                randomInt =  randomGenerator.nextInt(ParseStrings.questionTerms.length);
+                suggestion = ParseStrings.questionTerms[randomInt];
+                ToolTip toolTip = new ToolTip()
+                        .withText(suggestion)
+                        .withTextColor(Color.WHITE)
+                        .withColor(Color.GRAY)
+                        .withShadow()
+                        .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+                toolTips.add(new Pair<Integer, ToolTip>(0,toolTip));
+            }
+
+            if(pValues.get(1).equals("")) {
+                randomInt =  randomGenerator.nextInt(ParseStrings.actionTerms.length);
+                suggestion = ParseStrings.actionTerms[randomInt];
+                ToolTip toolTip = new ToolTip()
+                        .withText(suggestion.toLowerCase())
+                        .withTextColor(Color.WHITE)
+                        .withColor(Color.GRAY)
+                        .withShadow()
+                        .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+                toolTips.add(new Pair<Integer, ToolTip>(1,toolTip));
+            }
+
+            if(pValues.get(2).equals("")) {
+                randomInt =  randomGenerator.nextInt(ParseStrings.timeTerms.length);
+                suggestion = ParseStrings.timeTerms[randomInt];
+                ToolTip toolTip = new ToolTip()
+                        .withText(suggestion.toLowerCase())
+                        .withTextColor(Color.WHITE)
+                        .withColor(Color.GRAY)
+                        .withShadow()
+                        .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+                toolTips.add(new Pair<Integer, ToolTip>(2,toolTip));
+            }
+
+            if(pValues.get(3).equals("")) {
+                // may be needed. Left empty for now
+            }
+
+        }
+
+        if (toolTips.size() > 0) {
+            final ToolTip toolTip = toolTips.get(0).second;
+
+
+            myToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(resourceIds[toolTips.get(0).first]));
+            myToolTipView.setPointerCenterX(800);
+            myToolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
+                @Override
+                public void onToolTipViewClicked(ToolTipView toolTipView) {
+                    Log.d(getClass().getSimpleName(), toolTip.getText().toString());
+
+                    String temp = txtSpeechInput.getText().toString() + " " + toolTip.getText().toString();
+                    txtSpeechInput.setText(temp);
+                    toolTipView.remove();
+                    updateNewSuggestion();
+
+                    // update the lights with the inputs
+                   parsedValues = ParseSpeech(txtSpeechInput.getText().toString());
+                    // Make suggestions if there are missing values for parsed values
+                    setupTooltipSuggestions(parsedValues);
+                }
+            });
+
+
+
+
+            toolTips.remove(0);
+        }
+
+        return toolTips;
+    }
+
+    public void updateNewSuggestion() {
+        if (!ttips.isEmpty()) {
+            Pair<Integer, ToolTip> p = ttips.get(0);
+            final ToolTip toolTip2 = p.second;
+
+            myToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip2, findViewById(resourceIds[p.first]));
+            myToolTipView.setPointerCenterX(800);
+            myToolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
+                @Override
+                public void onToolTipViewClicked(ToolTipView toolTipView) {
+                    Log.d(getClass().getSimpleName(), toolTip2.getText().toString());
+
+                    String temp =  txtSpeechInput.getText().toString() + " " + toolTip2.getText().toString();
+                    txtSpeechInput.setText(temp);
+
+                    toolTipView.remove();
+                    updateNewSuggestion();
+
+                    // update the lights with the inputs
+                    parsedValues = ParseSpeech(txtSpeechInput.getText().toString());
+                    // Make suggestions if there are missing values for parsed values
+                    setupTooltipSuggestions(parsedValues);
+                }
+            });
+
+            // remove the tooltip because it is in use
+            ttips.remove(0);
+        }
     }
 
 }
