@@ -52,6 +52,8 @@ public class SpeechActivity extends WearableActivity {
     private static final Integer resourceIds [] = {R.id.statusCircle1, R.id.statusCircle2, R.id.statusCircle3};
     private Vector<Pair<Integer, ToolTip>> ttips = new Vector<>();
 
+    private boolean status[] = new boolean[3];
+
 
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
@@ -85,8 +87,10 @@ public class SpeechActivity extends WearableActivity {
         WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
 
-            @Override public void onLayoutInflated(WatchViewStub stub) {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
 
+                Arrays.fill(status, false);
                 // Now you can access your views
                 statusLight1 = (ImageView) findViewById(R.id.statusCircle1);
                 statusLight2 = (ImageView) findViewById(R.id.statusCircle2);
@@ -108,6 +112,8 @@ public class SpeechActivity extends WearableActivity {
                         statusLight1.setImageBitmap(bmp);
                         statusLight2.setImageBitmap(bmp);
                         statusLight3.setImageBitmap(bmp);
+
+                        Arrays.fill(status, false);
 
                         promptSpeechInput();
                         if (myToolTipView != null) {
@@ -260,6 +266,7 @@ public class SpeechActivity extends WearableActivity {
                 tokenVector.add("");
             } else {
                 statusLight1.setImageBitmap(bmp);
+                status[0] = true;
             }
 
             for (String s : ParseStrings.actionTerms) {
@@ -274,6 +281,7 @@ public class SpeechActivity extends WearableActivity {
 
             } else {
                 statusLight2.setImageBitmap(bmp);
+                status[1] = true;
             }
 
             for (String s : ParseStrings.timeTerms) {
@@ -287,6 +295,7 @@ public class SpeechActivity extends WearableActivity {
                 tokenVector.add("");
             } else {
                 statusLight3.setImageBitmap(bmp);
+                status[2] = true;
             }
 
 
@@ -299,6 +308,9 @@ public class SpeechActivity extends WearableActivity {
             }
             if (bools[3].equals(false)) {
                 tokenVector.add("");
+            } else {
+                //statusLight4.setImageBitmap(bmp);
+                //status[3] = true;
             }
 
 
@@ -309,6 +321,8 @@ public class SpeechActivity extends WearableActivity {
             statusLight1.setImageBitmap(bmp);
             statusLight2.setImageBitmap(bmp);
             statusLight3.setImageBitmap(bmp);
+
+            Arrays.fill(status, false);
         }
 
         return tokenVector;
@@ -378,20 +392,21 @@ public class SpeechActivity extends WearableActivity {
                 public void onToolTipViewClicked(ToolTipView toolTipView) {
                     Log.d(getClass().getSimpleName(), toolTip.getText().toString());
 
+                    if (checkStatusAllRed()) {
+                        txtSpeechInput.setText("");
+                    }
+
                     String temp = txtSpeechInput.getText().toString() + " " + toolTip.getText().toString();
                     txtSpeechInput.setText(temp);
                     toolTipView.remove();
                     updateNewSuggestion();
 
                     // update the lights with the inputs
-                   parsedValues = ParseSpeech(txtSpeechInput.getText().toString());
+                    parsedValues = ParseSpeech(txtSpeechInput.getText().toString());
                     // Make suggestions if there are missing values for parsed values
                     setupTooltipSuggestions(parsedValues);
                 }
             });
-
-
-
 
             toolTips.remove(0);
         }
@@ -411,7 +426,11 @@ public class SpeechActivity extends WearableActivity {
                 public void onToolTipViewClicked(ToolTipView toolTipView) {
                     Log.d(getClass().getSimpleName(), toolTip2.getText().toString());
 
-                    String temp =  txtSpeechInput.getText().toString() + " " + toolTip2.getText().toString();
+                    if (checkStatusAllRed()) {
+                        txtSpeechInput.setText("");
+                    }
+
+                    String temp = txtSpeechInput.getText().toString() + " " + toolTip2.getText().toString();
                     txtSpeechInput.setText(temp);
 
                     toolTipView.remove();
@@ -427,6 +446,15 @@ public class SpeechActivity extends WearableActivity {
             // remove the tooltip because it is in use
             ttips.remove(0);
         }
+    }
+
+    public boolean checkStatusAllRed() {
+        for (int i = 0; i < status.length; i++) {
+            if (status[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
