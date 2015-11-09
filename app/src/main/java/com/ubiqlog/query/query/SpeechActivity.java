@@ -3,9 +3,12 @@ package com.ubiqlog.query.query;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.wearable.activity.WearableActivity;
@@ -24,8 +27,12 @@ import com.nhaarman.supertooltips.ToolTipView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Vector;
+
+import Data.ParseStrings;
 
 
 /**
@@ -52,6 +59,10 @@ public class SpeechActivity extends WearableActivity {
 
     private ToolTipView myToolTipView = null;
 
+    private ImageView statusLight1;
+    private ImageView statusLight2;
+    private ImageView statusLight3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +77,10 @@ public class SpeechActivity extends WearableActivity {
             @Override public void onLayoutInflated(WatchViewStub stub) {
 
                 // Now you can access your views
+                statusLight1 = (ImageView) findViewById(R.id.statusCircle1);
+                statusLight2 = (ImageView) findViewById(R.id.statusCircle2);
+                statusLight3 = (ImageView) findViewById(R.id.statusCircle3);
+
                 mContainerView = (BoxInsetLayout) findViewById(R.id.container);
                 mTextView = (TextView) findViewById(R.id.text);
 
@@ -75,6 +90,14 @@ public class SpeechActivity extends WearableActivity {
                 microphoneBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        // Reset lights to Red
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+                                R.drawable.red_circle);
+                        statusLight1.setImageBitmap(bmp);
+                        statusLight2.setImageBitmap(bmp);
+                        statusLight3.setImageBitmap(bmp);
+
                         promptSpeechInput();
                         if (myToolTipView != null) {
                             myToolTipView.remove();
@@ -171,11 +194,111 @@ public class SpeechActivity extends WearableActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     txtSpeechInput.setText(result.get(0));
+
+                    // Parse text from user and update status lights
+                    ParseSpeech(result.get(0));
                 }
                 break;
             }
 
         }
+    }
+
+    /**
+     *  Author AP
+     * Speech text parsing algorithm
+     *
+     * @param speech
+     * @return vector of strings
+     */
+    public Vector<String> ParseSpeech(String speech) {
+        Vector<String> tokenVector = new Vector<>();
+        Boolean bools [] = new Boolean[4];
+        Arrays.fill(bools, false);
+
+        if(speech != null && !speech.equals("")) {
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.green_circle);
+
+            for (String s : ParseStrings.questionTerms) {
+
+                if (s.toLowerCase().contains("which") || s.toLowerCase().contains("does")) {
+                    String split [] = s.toLowerCase().split(" ");
+                    if (speech.toLowerCase().contains(split[0])) {
+                        String stripSpeech [] = speech.toLowerCase().split(" ");
+                        for (int i = 0; i < stripSpeech.length; i++) {
+                            if (stripSpeech[i].equals(split[0]) && i+1 < stripSpeech.length) {
+                                tokenVector.add(split[0] + stripSpeech[i+1]);
+                                bools[0] = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    if (speech.toLowerCase().contains(s.toLowerCase())) {
+                        tokenVector.add(s.toLowerCase());
+                        bools[0] = true;
+                        break;
+                    }
+                }
+            }
+            if (bools[0].equals(false)) {
+                tokenVector.add("");
+            } else {
+                statusLight1.setImageBitmap(bmp);
+            }
+
+            for (String s : ParseStrings.actionTerms) {
+                if (speech.toLowerCase().contains(s.toLowerCase())) {
+                    tokenVector.add(s.toLowerCase());
+                    bools[1] = true;
+                    break;
+                }
+            }
+            if (bools[1].equals(false)) {
+                tokenVector.add("");
+
+            } else {
+                statusLight2.setImageBitmap(bmp);
+            }
+
+            for (String s : ParseStrings.timeTerms) {
+                if (speech.toLowerCase().contains(s.toLowerCase())) {
+                    tokenVector.add(s.toLowerCase());
+                    bools[2] = true;
+                    break;
+                }
+            }
+            if (bools[2].equals(false)) {
+                tokenVector.add("");
+            } else {
+                statusLight3.setImageBitmap(bmp);
+            }
+
+
+            for (String s : ParseStrings.quantativeTerms) {
+                if (speech.toLowerCase().contains(s.toLowerCase())) {
+                    tokenVector.add(s.toLowerCase());
+                    bools[3] = true;
+                    break;
+                }
+            }
+            if (bools[3].equals(false)) {
+                tokenVector.add("");
+            }
+
+
+        } else {
+
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.red_circle);
+            statusLight1.setImageBitmap(bmp);
+            statusLight2.setImageBitmap(bmp);
+            statusLight3.setImageBitmap(bmp);
+        }
+
+        return tokenVector;
+
     }
 
 }
