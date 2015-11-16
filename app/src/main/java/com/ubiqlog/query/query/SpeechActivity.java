@@ -43,7 +43,6 @@ import Data.ParseStrings;
  *  Main UI for speech in the Query App
  *
  */
-
 public class SpeechActivity extends WearableActivity {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
@@ -95,6 +94,21 @@ public class SpeechActivity extends WearableActivity {
                 statusLight1 = (ImageView) findViewById(R.id.statusCircle1);
                 statusLight2 = (ImageView) findViewById(R.id.statusCircle2);
                 statusLight3 = (ImageView) findViewById(R.id.statusCircle3);
+
+
+                /**
+                 *  Experiment without status light indicators
+                 *  Uncomment these 3 visibility lines to set them to be invisible
+                 */
+                /*
+                statusLight1.setVisibility(View.INVISIBLE);
+                statusLight2.setVisibility(View.INVISIBLE);
+                statusLight3.setVisibility(View.INVISIBLE);
+                */
+
+                /**
+                 * End of experiment [without indicator lights]
+                 */
 
                 mContainerView = (BoxInsetLayout) findViewById(R.id.container);
                 mTextView = (TextView) findViewById(R.id.text);
@@ -166,14 +180,23 @@ public class SpeechActivity extends WearableActivity {
 
     private void updateDisplay() {
         if (isAmbient()) {
-            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mTextView.setTextColor(getResources().getColor(android.R.color.white));
+            try {
+                mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
+                mTextView.setTextColor(getResources().getColor(android.R.color.white));
+            } catch (NullPointerException n) {
+                n.printStackTrace();
+            }
             mClockView.setVisibility(View.VISIBLE);
 
             mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
         } else {
             mContainerView.setBackground(null);
-            mTextView.setTextColor(getResources().getColor(android.R.color.black));
+
+            try {
+                mTextView.setTextColor(getResources().getColor(android.R.color.black));
+            } catch (NullPointerException n) {
+                n.printStackTrace();
+            }
             mClockView.setVisibility(View.GONE);
         }
     }
@@ -216,11 +239,9 @@ public class SpeechActivity extends WearableActivity {
                     parsedValues = ParseSpeech(result.get(0));
                     // Make suggestions if there are missing values for parsed values
                     setupTooltipSuggestions(parsedValues);
-
                 }
                 break;
             }
-
         }
     }
 
@@ -230,7 +251,8 @@ public class SpeechActivity extends WearableActivity {
      *
      * @param speech
      * @return vector of strings
-     */
+     *
+     **/
     public Vector<String> ParseSpeech(String speech) {
         Vector<String> tokenVector = new Vector<>();
         Boolean bools [] = new Boolean[4];
@@ -316,8 +338,7 @@ public class SpeechActivity extends WearableActivity {
 
         } else {
 
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.red_circle);
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.red_circle);
             statusLight1.setImageBitmap(bmp);
             statusLight2.setImageBitmap(bmp);
             statusLight3.setImageBitmap(bmp);
@@ -340,15 +361,20 @@ public class SpeechActivity extends WearableActivity {
         if (pValues.size() == 4) {
             if (pValues.get(0).equals("")) {
 
-                randomInt =  randomGenerator.nextInt(ParseStrings.questionTerms.length);
-                suggestion = ParseStrings.questionTerms[randomInt];
+                if (!txtSpeechInput.getText().toString().contains("how")) {
+                    randomInt = randomGenerator.nextInt(ParseStrings.questionTerms.length);
+                    suggestion = ParseStrings.questionTerms[randomInt];
+                } else {
+                    randomInt = randomGenerator.nextInt(ParseStrings.howTerms.length);
+                    suggestion = ParseStrings.howTerms[randomInt];
+                }
                 ToolTip toolTip = new ToolTip()
                         .withText(suggestion)
                         .withTextColor(Color.WHITE)
                         .withColor(Color.GRAY)
                         .withShadow()
                         .withAnimationType(ToolTip.AnimationType.FROM_TOP);
-                toolTips.add(new Pair<Integer, ToolTip>(0,toolTip));
+                toolTips.add(new Pair<Integer, ToolTip>(0, toolTip));
             }
 
             if(pValues.get(1).equals("")) {
@@ -383,8 +409,12 @@ public class SpeechActivity extends WearableActivity {
 
         if (toolTips.size() > 0) {
             final ToolTip toolTip = toolTips.get(0).second;
-
-
+            /**
+             *   Experiment without tooltips
+             *   Comment these 3 lines containing 'myToolTipView'
+             *
+             **/
+            ///*
             myToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(resourceIds[toolTips.get(0).first]));
             myToolTipView.setPointerCenterX(800);
             myToolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
@@ -399,16 +429,21 @@ public class SpeechActivity extends WearableActivity {
                     String temp = txtSpeechInput.getText().toString() + " " + toolTip.getText().toString();
                     txtSpeechInput.setText(temp);
                     toolTipView.remove();
-                    updateNewSuggestion();
 
                     // update the lights with the inputs
                     parsedValues = ParseSpeech(txtSpeechInput.getText().toString());
+
                     // Make suggestions if there are missing values for parsed values
+                    updateNewSuggestion();
                     setupTooltipSuggestions(parsedValues);
                 }
             });
-
             toolTips.remove(0);
+            //*/
+
+            /**
+             * End of experiment [without tooltips]
+             */
         }
 
         return toolTips;

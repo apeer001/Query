@@ -34,14 +34,30 @@ public class ParseStrings {
         "Are there",
         "Can You",
         "How has",
-        "where",
-        "who",
+        "Where",
+        "Who",
         "Amount of",
         "How Many",
         "How Close",
         "How close",
         "How is my",
         "Does [other]",
+        "How active",
+        "How are",
+        "How can I"
+    };
+
+    public static final String howTerms[]  = {
+        "How Many",
+        "How Much",
+        "How Long",
+        "How often",
+        "How far",
+        "How has",
+        "How Many",
+        "How Close",
+        "How close",
+        "How is my",
         "How active",
         "How are",
         "How can I"
