@@ -4,11 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.wearable.activity.WearableActivity;
@@ -48,30 +44,33 @@ public class SpeechActivity extends WearableActivity {
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
 
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+
     private static final Integer resourceIds [] = {R.id.statusCircle1, R.id.statusCircle2, R.id.statusCircle3};
     private Vector<Pair<Integer, ToolTip>> ttips = new Vector<>();
 
     private boolean status[] = new boolean[3];
 
 
+    /**
+     *  Time Comparison flag
+     *  Used to determine when there are more than one Time terms involved in the parsed String
+     */
+    private boolean timeComparisonFlag;
+
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
     private TextView mClockView;
-
     private Button microphoneBtn;
     private ImageView circularImage;
-
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
 
+    private ToolTipRelativeLayout toolTipRelativeLayout;
     private ToolTipView myToolTipView = null;
-
     private ImageView statusLight1;
     private ImageView statusLight2;
     private ImageView statusLight3;
-
-    private ToolTipRelativeLayout toolTipRelativeLayout;
 
     private Vector<String> parsedValues;
 
@@ -88,6 +87,9 @@ public class SpeechActivity extends WearableActivity {
 
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
+
+                // Set timeComp flag to false
+                timeComparisonFlag = false;
 
                 Arrays.fill(status, false);
                 // Now you can access your views
@@ -119,6 +121,9 @@ public class SpeechActivity extends WearableActivity {
                 microphoneBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        // Reset timeComparisonFlag to false
+                        timeComparisonFlag = false;
 
                         // Reset lights to Red
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(),
@@ -183,21 +188,23 @@ public class SpeechActivity extends WearableActivity {
             try {
                 mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
                 mTextView.setTextColor(getResources().getColor(android.R.color.white));
+                mClockView.setVisibility(View.VISIBLE);
+
+                mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
             } catch (NullPointerException n) {
                 n.printStackTrace();
             }
-            mClockView.setVisibility(View.VISIBLE);
 
-            mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
         } else {
             mContainerView.setBackground(null);
 
             try {
                 mTextView.setTextColor(getResources().getColor(android.R.color.black));
+                mClockView.setVisibility(View.GONE);
             } catch (NullPointerException n) {
                 n.printStackTrace();
             }
-            mClockView.setVisibility(View.GONE);
+
         }
     }
 
@@ -306,11 +313,20 @@ public class SpeechActivity extends WearableActivity {
                 status[1] = true;
             }
 
+            int countTimesterms = 0;
             for (String s : ParseStrings.timeTerms) {
                 if (speech.toLowerCase().contains(s.toLowerCase())) {
-                    tokenVector.add(s.toLowerCase());
+                    if (!timeComparisonFlag) {
+                        tokenVector.add(s.toLowerCase());
+                        countTimesterms++;
+                        if (1 < countTimesterms) {
+                            timeComparisonFlag = true;
+                        }
+                    }
                     bools[2] = true;
-                    break;
+                    if (timeComparisonFlag) {
+                        break;
+                    }
                 }
             }
             if (bools[2].equals(false)) {
@@ -321,7 +337,7 @@ public class SpeechActivity extends WearableActivity {
             }
 
 
-            for (String s : ParseStrings.quantativeTerms) {
+            for (String s : ParseStrings.aggregationTerms) {
                 if (speech.toLowerCase().contains(s.toLowerCase())) {
                     tokenVector.add(s.toLowerCase());
                     bools[3] = true;
@@ -358,7 +374,7 @@ public class SpeechActivity extends WearableActivity {
 
         int randomInt = 0;
         String suggestion = "";
-        if (pValues.size() == 4) {
+        if (pValues.size() >= 4) {
             if (pValues.get(0).equals("")) {
 
                 if (!txtSpeechInput.getText().toString().contains("how")) {
@@ -401,7 +417,7 @@ public class SpeechActivity extends WearableActivity {
                 toolTips.add(new Pair<Integer, ToolTip>(2,toolTip));
             }
 
-            if(pValues.get(3).equals("")) {
+            if(pValues.get(3).equals("") && !timeComparisonFlag || pValues.get(4).equals("") && timeComparisonFlag ) {
                 // may be needed. Left empty for now
             }
 

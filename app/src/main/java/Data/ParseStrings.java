@@ -103,7 +103,7 @@ public class ParseStrings {
         "Period"
     };
 
-    public static final String quantativeTerms[]  = {
+    public static final String aggregationTerms[]  = {
         "Average",
         "Miles",
         "Amount",
