@@ -18,7 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Vector;
 
 /**
- * Created by Aaron on 11/20/2015.
+ * Created by Aaron P on 11/20/2015.
  */
 public class TooltipCreator {
 

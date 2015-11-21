@@ -12,11 +12,11 @@ import com.ubiqlog.query.query.Services.QeuryWearableListenerService;
 import java.util.Date;
 
 /**
- * Created by Aaron on 11/19/2015.
+ * Created by Aaron P on 11/19/2015.
  * Wear
  */
 
-public class SendDataTask  extends AsyncTask<Void, Void, Void> {
+public class SendDataTask extends AsyncTask<Void, Void, Void> {
 
     private final String contents;
     private final Context mContext;

@@ -14,7 +14,11 @@ import com.google.android.gms.wearable.Wearable;
 import com.ubiqlog.query.R;
 import com.ubiqlog.query.Services.QueryWearableListenerService;
 
-
+/**
+ *  Author: Aaron Peery
+ *  Main UI for Query App Query mobile app
+ *
+ */
 public class MainActivity extends AppCompatActivity implements
                                                     //DataApi.DataListener,
                                                     GoogleApiClient.ConnectionCallbacks,

@@ -28,6 +28,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ *  Author: AP
+ *  WearablelistenerService in the Query wear App
+ *
+ */
 public class QeuryWearableListenerService extends WearableListenerService {
 
 

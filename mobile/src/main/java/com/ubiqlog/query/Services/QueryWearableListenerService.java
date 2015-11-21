@@ -31,7 +31,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Aaron on 11/18/2015.
+ * Created by Aaron P on 11/18/2015.
+ * Mobile
  */
 public class QueryWearableListenerService extends WearableListenerService {
 

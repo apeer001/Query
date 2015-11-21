@@ -1,7 +1,7 @@
 package com.ubiqlog.query.query.Data;
 
 /**
- * Created by Aaron on 11/17/2015.
+ * Created by Aaron P on 11/17/2015.
  */
 public class POSTags {
 

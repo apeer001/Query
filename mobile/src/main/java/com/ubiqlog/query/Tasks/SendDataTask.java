@@ -14,7 +14,7 @@ import com.ubiqlog.query.Services.QueryWearableListenerService;
 import java.util.Date;
 
 /**
- * Created by Aaron on 11/19/2015.
+ * Created by Aaron P on 11/19/2015.
  * Mobile
  *
  */

@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.wearable.activity.WearableActivity;
@@ -34,7 +32,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Vector;
-
 import com.ubiqlog.query.query.Data.ParseAlgorithm;
 import com.ubiqlog.query.query.Data.ParseStrings;
 import com.ubiqlog.query.query.Data.TooltipCreator;
@@ -42,7 +39,6 @@ import com.ubiqlog.query.query.OpenNLP.POSParser;
 import com.ubiqlog.query.query.R;
 import com.ubiqlog.query.query.Tasks.SendDataTask;
 import com.ubiqlog.query.query.Services.QeuryWearableListenerService;
-
 import opennlp.tools.tokenize.SimpleTokenizer;
 
 
