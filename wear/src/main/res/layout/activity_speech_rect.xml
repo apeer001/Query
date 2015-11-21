@@ -67,7 +67,6 @@
                         android:layout_marginLeft="1dp"
                         android:layout_marginRight="1dp"
                         android:layout_gravity="center"
-
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="32dp"
                         android:layout_below="@+id/scrollTextView">
@@ -120,8 +119,19 @@
                             android:layout_above="@+id/statusCircle1"
                             android:layout_centerHorizontal="true"
                             android:id="@+id/SpeechText" />
-                    </ScrollView>
 
+
+                    </ScrollView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:id="@+id/verbList"
+                        android:layout_above="@+id/statusCircle1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="18dp"
+                        />
 
                 </RelativeLayout>
 

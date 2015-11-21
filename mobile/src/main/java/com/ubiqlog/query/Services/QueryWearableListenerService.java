@@ -22,6 +22,7 @@ import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.ubiqlog.query.FrontEnd.MainActivity;
 import com.ubiqlog.query.OpenNLP.POSParser;
+import com.ubiqlog.query.Tasks.SendDataTask;
 
 import java.util.Date;
 import java.util.List;
@@ -37,13 +38,15 @@ public class QueryWearableListenerService extends WearableListenerService {
     GoogleApiClient mClient;
     Handler mHandler;
 
-    private final static String POS_KEY = "Result";
+    public final static String POS_KEY = "Result";
+    public final static String POS_BOOL = "wearableListenerBool";
     public POSParser posParser;
+
+    Runnable r;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(getClass().getSimpleName(), "Starting WearablelistenerService OnStartCommand()");
-
         if (mClient != null) {
             mClient.connect();
         }
@@ -61,6 +64,7 @@ public class QueryWearableListenerService extends WearableListenerService {
                     @Override
                     public void onConnected(Bundle bundle) {
                         //Log.d(TAG, "Successful connect");
+                        Log.e(getClass().getSimpleName(), "Google api client connected in onCreate()");
                     }
 
                     @Override
@@ -69,7 +73,9 @@ public class QueryWearableListenerService extends WearableListenerService {
                     }
                 })
                 .build();
+
         mClient.connect();
+        Log.e(getClass().getSimpleName(), "Google api client connected in onCreate()");
 
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         executor.execute(new Runnable() {
@@ -81,8 +87,7 @@ public class QueryWearableListenerService extends WearableListenerService {
         });
         executor.shutdown();
 
-        mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
+        r = new Runnable() {
             @Override
             public void run() {
                 //Log.e(getClass().getSimpleName(), "Inside handler in wearable listener mobile");
@@ -90,13 +95,16 @@ public class QueryWearableListenerService extends WearableListenerService {
                 if (executor.isTerminated()) {
                     //Log.e(getClass().getSimpleName(), "Inside handler run()");
                     Intent intent = new Intent(MainActivity.FINISHED_LOAD);
-                    intent.putExtra("wearableListenerBool", true);
+                    intent.putExtra(POS_BOOL, true);
                     sendBroadcast(intent);
                     //mHandler.removeCallbacks(this);
                 }
 
             }
-        }, 2000);
+        };
+
+        mHandler = new Handler();
+        mHandler.postDelayed(r, 2000);
     }
 
     @Override
@@ -112,26 +120,27 @@ public class QueryWearableListenerService extends WearableListenerService {
 
                 if (itemURI.equals("/nlpmobile")) {
                     // Handlge NLP processing and return result back to wear
-                    Log.d(getClass().getSimpleName(), "NLP transfers Complete");
+                    Log.e(getClass().getSimpleName(), "NLP transfers Complete");
 
-                    Log.d(getClass().getSimpleName(), "POS String Data Received");
+                    Log.e(getClass().getSimpleName(), "POS String Data Received");
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     String POSString = dataMap.getString(POS_KEY);
+                    Log.e(getClass().getSimpleName(), "POS String Data: " + POSString);
 
-                    String POSArray[] = posParser.collectAllVerbTags(posParser.getTags(POSString));
-
-                    if (POSArray != null) {
-                        POSString = "";
-                        if (POSArray.length == 1) {
-                            POSString = POSArray[0];
-                        }
-                        else if (POSArray.length > 1) {
-                            for (int i = 0; i < POSArray.length - 1; i++) {
-                                POSString += POSArray[i] + " ";
+                    if (posParser != null) {
+                        String POSArray[] = posParser.collectAllVerbTags(posParser.getTags(POSString));
+                        if (POSArray != null) {
+                            POSString = "";
+                            if (POSArray.length == 1) {
+                                POSString = POSArray[0];
+                            } else if (POSArray.length > 1) {
+                                for (int i = 0; i < POSArray.length - 1; i++) {
+                                    POSString += POSArray[i] + " ";
+                                }
+                                POSString += POSArray[POSArray.length - 1];
                             }
-                            POSString += POSArray[POSArray.length - 1];
-                        }
 
+                        /*
                         ConnectionResult connectionResult =
                                 mClient.blockingConnect(30, TimeUnit.SECONDS);
 
@@ -139,7 +148,9 @@ public class QueryWearableListenerService extends WearableListenerService {
                             //Log.e(TAG, "Failed to connect to GoogleApiClient.");
                             return;
                         }
+                        */
 
+                        /*
                         final PutDataMapRequest outgoingDataMap = PutDataMapRequest.create("/nlpwear");
                         outgoingDataMap.getDataMap().putString("Date", new Date().toString());
                         outgoingDataMap.getDataMap().putString(POS_KEY, POSString);
@@ -156,7 +167,12 @@ public class QueryWearableListenerService extends WearableListenerService {
                                 }
                             }
                         });
-                        //mClient.disconnect();
+                        */
+                            SendDataTask sendDataTask = new SendDataTask(getApplicationContext(), POSString, mClient);
+                            sendDataTask.execute();
+
+                            //mClient.disconnect();
+                        }
                     }
 
                 } else {
@@ -190,7 +206,16 @@ public class QueryWearableListenerService extends WearableListenerService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mClient.disconnect();
+        if (mClient != null) {
+            mClient.disconnect();
+        }
+        if (mHandler != null) {
+            mHandler.removeCallbacks(r);
+            //Log.e(getClass().getSimpleName(), "Inside handler run()");
+            Intent intent = new Intent(MainActivity.FINISHED_LOAD);
+            intent.putExtra(POS_BOOL, false);
+            sendBroadcast(intent);
+        }
         mHandler = null;
     }
 }

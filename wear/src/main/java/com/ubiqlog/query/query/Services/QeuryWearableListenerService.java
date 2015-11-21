@@ -65,9 +65,8 @@ public class QeuryWearableListenerService extends WearableListenerService {
                     }
                 })
                 .build();
+
         mClient.connect();
-
-
     }
 
     @Override
@@ -94,6 +93,7 @@ public class QeuryWearableListenerService extends WearableListenerService {
                 if (itemURI.equals("/nlpwear")) {
                     Log.d(getClass().getSimpleName(), "NLP wear transfers Complete");
 
+                    /*
                     ConnectionResult connectionResult =
                         mClient.blockingConnect(30, TimeUnit.SECONDS);
 
@@ -101,6 +101,7 @@ public class QeuryWearableListenerService extends WearableListenerService {
                         Log.e(getClass().getSimpleName(), "Failed to connect to GoogleApiClient.");
                         return;
                     }
+                    */
 
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     String POSStr = dataMap.getString(POS_KEY);
@@ -117,8 +118,8 @@ public class QeuryWearableListenerService extends WearableListenerService {
                     byte[] payload = uri.toString().getBytes();
 
                     // Send the RPC
-                    Wearable.MessageApi.sendMessage(mClient, nodeId,
-                            DATA_ITEM_RECEIVED_PATH, payload);
+                    //Wearable.MessageApi.sendMessage(mClient, nodeId,
+                    //        DATA_ITEM_RECEIVED_PATH, payload);
 
                 } else {
                     Log.i(getClass().getSimpleName(), "unknown item: " + item.toString());

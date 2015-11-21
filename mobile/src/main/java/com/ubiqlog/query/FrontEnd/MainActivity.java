@@ -4,24 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.os.Binder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Wearable;
 import com.ubiqlog.query.R;
 import com.ubiqlog.query.Services.QueryWearableListenerService;
 
-import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity implements
                                                     //DataApi.DataListener,
@@ -45,12 +37,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         statusText = (TextView) findViewById(R.id.statusText);
         statusText.setText(status_waiting);
-
 
         // Setup Broadcast receiver to receiver results from wearableListenerService
         b = new BroadcastReceiver() {
@@ -58,8 +46,13 @@ public class MainActivity extends AppCompatActivity implements
             public void onReceive(Context context, Intent intent) {
                 //Log.d(getClass().getSimpleName(), "Received action intent in broadcast receiver");
                 // Update UI when done loading POS parser
-                if(!statusText.getText().toString().equals(status_done)) {
+                boolean result = intent.getBooleanExtra(QueryWearableListenerService.POS_BOOL, false);
+                if(!statusText.getText().toString().equals(status_done) && result) {
                     statusText.setText(status_done);
+                } else if (!result) {
+                    statusText.setText(status_waiting);
+                    stopService(new Intent(MainActivity.this, QueryWearableListenerService.class));
+                    startService(new Intent(MainActivity.this, QueryWearableListenerService.class));
                 }
             }
         };
@@ -76,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
-
 
     }
 

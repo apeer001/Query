@@ -99,7 +99,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Press Button"
+                    android:text=""
                     android:textAlignment="center"
                     android:id="@+id/verbList"
                     android:layout_above="@+id/statusCircle1"

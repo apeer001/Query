@@ -41,7 +41,7 @@ public class POSTags {
         "WDT",  // Wh­determiner
         "WP",   // Wh­pronoun
         "WP$",  // Possessive wh­pronoun
-        "WRB"  // Wh­adverb
+        "WRB"   // Wh­adverb
     };
 
     public static final String verbPastTense = "VBD";

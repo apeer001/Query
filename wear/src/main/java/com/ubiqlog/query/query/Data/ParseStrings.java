@@ -92,8 +92,6 @@ public class ParseStrings {
         "December"
     };
 
-
-
     public static final String actionTerms[]  = {
         "Walk",
         "Run",
@@ -129,4 +127,9 @@ public class ParseStrings {
         "Often",
         "Daily"
     };
+
+    public static final String doesOther =  "Does [other]";
+    public static final String does =  "Does";
+    public static final String whichOther =  "which [other]";
+    public static final String which =  "which";
 }
